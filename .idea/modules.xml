@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/artifical-intelligence.iml" filepath="$PROJECT_DIR$/artifical-intelligence.iml" />
+      <module fileurl="file://$PROJECT_DIR$/neural-networks/neural-networks.iml" filepath="$PROJECT_DIR$/neural-networks/neural-networks.iml" />
+    </modules>
+  </component>
+</project>
