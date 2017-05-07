@@ -1,107 +1,136 @@
 package perceptron;
 
+
 public class PerceptronTest {
 
+    private static double[][] generateTruthTable(int size) {
+        int rows = (int)Math.pow(2, size);
+        double[][] table = new double[rows][size];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < size ; j++) {
+                table[i][size - j - 1] = (i/(int) Math.pow(2, j)) % 2;
+            }
+        }
+
+        return table;
+    }
+
+    private static int[] generateTruthTableOutput(int size, char operation) {
+        int rows = (int)Math.pow(2, size);
+        double[][] table = generateTruthTable(size);
+        int[] outputTable = new int[rows];
+        boolean[][] booleanTable = new boolean[rows][size];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < size ; j++) {
+                booleanTable[i][j] = (table[i][j] == 0) ? false : true;
+            }
+        }
+
+        switch (operation) {
+            case 'a' :
+                for (int i = 0; i < rows; i++) {
+                    boolean answer = booleanTable[i][0] & booleanTable[i][1];
+
+                    for (int j = 2; j < size; j++) {
+                        answer = answer & booleanTable[i][j];
+                    }
+
+                    outputTable[i] = (answer) ? 1 : 0;
+                }
+                break;
+
+            case 'o' :
+                for (int i = 0; i < rows; i++) {
+                    boolean answer = booleanTable[i][0] | booleanTable[i][1];
+
+                    for (int j = 2; j < size; j++) {
+                        answer = answer | booleanTable[i][j];
+                    }
+
+                    outputTable[i] = (answer) ? 1 : 0;
+                }
+                break;
+
+            case 'x' :
+                for (int i = 0; i < rows; i++) {
+                    boolean answer = booleanTable[i][0] ^ booleanTable[i][1];
+
+                    for (int j = 2; j < size; j++) {
+                        answer = answer ^ booleanTable[i][j];
+                    }
+
+                    outputTable[i] = (answer) ? 1 : 0;
+                }
+                break;
+        }
+
+
+        return outputTable;
+    }
+
+    private static void printPerceptronTestOutputs(int maxVariables) {
+        if (maxVariables >= 2) {
+            Perceptron perceptron;
+
+            for (int i = 2; i <= maxVariables; i++) {
+                int trainingSetSize = (int)Math.pow(2, i);
+                perceptron = new Perceptron(i, trainingSetSize);
+                double[][] input = generateTruthTable(i);
+
+                System.out.printf("\nTesting Perceptron with AND function and %d variables\n", i);
+                if (perceptron.train(input, generateTruthTableOutput(i, 'a'))) {
+                    for (int j = 0; j < i; j++) {
+                        System.out.print("x" + j + "\t");
+                    }
+                    System.out.println("s0");
+
+                    for (int j = 0; j < trainingSetSize; j++) {
+                        for (int k = 0; k < i; k++) {
+                            System.out.print((int)input[j][k] + "\t");
+                        }
+                        System.out.println(perceptron.test(input[j]));
+                    }
+                } else
+                    System.out.println("The Perceptron could not solve for the given inputs");
+
+                System.out.printf("\nTesting Perceptron with OR function and %d variables\n", i);
+                if (perceptron.train(input, generateTruthTableOutput(i, 'o'))) {
+                    for (int j = 0; j < i; j++) {
+                        System.out.print("x" + j + "\t");
+                    }
+                    System.out.println("s0");
+
+                    for (int j = 0; j < trainingSetSize; j++) {
+                        for (int k = 0; k < i; k++) {
+                            System.out.print((int)input[j][k] + "\t");
+                        }
+                        System.out.println(perceptron.test(input[j]));
+                    }
+                } else
+                    System.out.println("The Perceptron could not solve for the given inputs");
+
+                System.out.printf("\nTesting Perceptron with XOR function and %d variables\n", i);
+                if (perceptron.train(input, generateTruthTableOutput(i, 'x'))) {
+                    for (int j = 0; j < i; j++) {
+                        System.out.print("x" + j + "\t");
+                    }
+                    System.out.println("s0");
+
+                    for (int j = 0; j < trainingSetSize; j++) {
+                        for (int k = 0; k < i; k++) {
+                            System.out.print((int)input[j][k] + "\t");
+                        }
+                        System.out.println(perceptron.test(input[j]));
+                    }
+                } else
+                    System.out.println("The Perceptron could not solve for the given inputs");
+            }
+        }
+    }
+
     public static void main(String [] args) {
-
-        double [][] inputs2 = {{0,0}, {0,1}, {1,0}, {1,1}};
-        double [][] inputs3 = {{0,0,0}, {0,0,1}, {0,1,0}, {0,1,1}, {1,0,0}, {1,0,1}, {1,1,0}, {1,1,1}};
-        int [] outputsAND2 = {0,0,0,1};
-        int [] outputsAND3 = {0,0,0,0,0,0,0,1};
-        int [] outputsOR2 = {0,1,1,1};
-        int [] outputsOR3 = {0,1,1,1,1,1,1,1};
-        int [] outputsXOR2 = {0,1,1,0};
-        int [] outputsXOR3 = {0,1,1,0,1,0,0,1};
-
-        Perceptron perceptron;
-
-        perceptron = new Perceptron(2, 4);
-        System.out.printf("Testing Perceptron with AND function and %d variables\n", 2);
-        if (perceptron.train(inputs2, outputsAND2)) {
-            System.out.printf("x1\tx2\ts0\n");
-
-            for (int i = 0; i < 4; i++) {
-                System.out.printf("%d\t%d\t%d\n", (int)inputs2[i][0], (int)inputs2[i][1],perceptron.test(inputs2[i]));
-            }
-
-        } else {
-            System.out.println("The Perceptron could not solve for the given inputs");
-        }
-
-        System.out.println("");
-
-        perceptron = new Perceptron(2, 4);
-        System.out.printf("Testing Perceptron with OR function and %d variables\n", 2);
-        if (perceptron.train(inputs2, outputsOR2)) {
-            System.out.printf("x1\tx2\ts0\n");
-
-            for (int i = 0; i < 4; i++) {
-                System.out.printf("%d\t%d\t%d\n", (int)inputs2[i][0], (int)inputs2[i][1],perceptron.test(inputs2[i]));
-            }
-
-        } else {
-            System.out.println("The Perceptron could not solve for the given inputs");
-        }
-
-        System.out.println("");
-
-        perceptron = new Perceptron(2, 4);
-        System.out.printf("Testing Perceptron with XOR function and %d variables\n", 2);
-        if (perceptron.train(inputs2, outputsXOR2)) {
-            System.out.printf("x1\tx2\ts0\n");
-
-            for (int i = 0; i < 4; i++) {
-                System.out.printf("%d\t%d\t%d\n", (int)inputs2[i][0], (int)inputs2[i][1],perceptron.test(inputs2[i]));
-            }
-
-        } else {
-            System.out.println("The Perceptron could not solve for the given inputs");
-        }
-
-        System.out.println("");
-
-        perceptron = new Perceptron(3, 8);
-        System.out.println("Testing Perceptron with AND function with 3 variables");
-        if (perceptron.train(inputs3, outputsAND3)) {
-            System.out.printf("x1\tx2\tx3\ts0\n");
-
-            for (int i = 0; i < 8; i++) {
-                System.out.printf("%d\t%d\t%d\t%d\n", (int)inputs3[i][0], (int)inputs3[i][1], (int)inputs3[i][2],perceptron.test(inputs3[i]));
-            }
-
-        } else {
-            System.out.println("The Perceptron could not solve for the given inputs");
-        }
-
-        System.out.println("");
-
-        perceptron = new Perceptron(3, 8);
-        System.out.println("Testing Perceptron with OR function with 3 variables");
-        if (perceptron.train(inputs3, outputsOR3)) {
-            System.out.printf("x1\tx2\tx3\ts0\n");
-
-            for (int i = 0; i < 8; i++) {
-                System.out.printf("%d\t%d\t%d\t%d\n", (int)inputs3[i][0], (int)inputs3[i][1], (int)inputs3[i][2],perceptron.test(inputs3[i]));
-            }
-
-        } else {
-            System.out.println("The Perceptron could not solve for the given inputs");
-        }
-
-        System.out.println("");
-
-        perceptron = new Perceptron(3, 8);
-        System.out.println("Testing Perceptron with XOR function with 3 variables");
-        if (perceptron.train(inputs3, outputsXOR3)) {
-            System.out.printf("x1\tx2\tx3\ts0\n");
-
-            for (int i = 0; i < 8; i++) {
-                System.out.printf("%d\t%d\t%d\t%d\n", (int)inputs3[i][0], (int)inputs3[i][1], (int)inputs3[i][2],perceptron.test(inputs3[i]));
-            }
-
-        } else {
-            System.out.println("The Perceptron could not solve for the given inputs");
-        }
-
-     }
+        printPerceptronTestOutputs(5);
+    }
 }

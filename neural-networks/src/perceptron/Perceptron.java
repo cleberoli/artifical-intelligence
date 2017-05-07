@@ -1,11 +1,10 @@
 package perceptron;
 
-import java.util.Arrays;
 import java.util.Random;
 
 public class Perceptron {
 
-    int epochs;
+    int maxEpochs;
     int inputNumber;
     int trainingSetSize;
     double [] weights;
@@ -20,7 +19,7 @@ public class Perceptron {
         this.weights = new double[inputNumber];
         this.bias = -1;
         this.eta = 0.3;
-        this.epochs = 1000;
+        this.maxEpochs = 1000;
         this.errorThreshold = 0;
 
         Random random = new Random();
@@ -32,28 +31,10 @@ public class Perceptron {
         biasWeight = random.nextDouble();
     }
 
-    public Perceptron(int inputNumber, int trainingSetSize, double weight) {
-        this.inputNumber = inputNumber;
-        this.trainingSetSize = trainingSetSize;
-        this.weights = new double[inputNumber];
-        this.bias = -1;
-        this.eta = 0.3;
-        this.epochs = 10001;
-        this.errorThreshold = 0;
-
-        Random random = new Random();
-
-        for (int i = 0; i < inputNumber; i++) {
-            weights[i] = weight;
-        }
-
-        biasWeight = weight;
-    }
-
     public boolean train(double [][] inputs, int [] outputs) {
         double totalError = Double.POSITIVE_INFINITY;
 
-        for (int k = 0; k < epochs; k++) {
+        for (int k = 0; k < maxEpochs; k++) {
             totalError = 0;
 
             for (int j = 0; j < trainingSetSize; j++) {
@@ -97,10 +78,7 @@ public class Perceptron {
     }
 
     private int activationFunction(double value) {
-        if (value >= 0)
-            return 1;
-        else
-            return 0;
+        return (value >= 0) ? 1 : 0;
     }
 
 }
