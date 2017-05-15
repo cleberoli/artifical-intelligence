@@ -131,6 +131,6 @@ public class PerceptronTest {
     }
 
     public static void main(String [] args) {
-        printPerceptronTestOutputs(5);
+        printPerceptronTestOutputs(3);
     }
 }
